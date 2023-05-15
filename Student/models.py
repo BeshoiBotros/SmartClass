@@ -1,10 +1,12 @@
 from django.db import models
 from django.contrib.auth.models import User
 from Doctor.models import Doctor
+from Subject.models import Subject
 
 class Student(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
-    isStudent = models.BooleanField(default=True)
+    # role number = 2 point to student
+    roleNum = models.IntegerField(default=2)
 
 class Profile(models.Model):
     student = models.OneToOneField(Student, on_delete=models.CASCADE)
@@ -12,5 +14,5 @@ class Profile(models.Model):
 
 class PaidCourses(models.Model):
     student = models.ForeignKey(Student, on_delete=models.CASCADE)
-    doctor = models.ForeignKey(Doctor, on_delete=models.CASCADE)
-    # subject here after createing subject model
+    doctor  = models.ForeignKey(Doctor, on_delete=models.CASCADE)
+    subject = models.ForeignKey(Subject, on_delete=models.CASCADE)

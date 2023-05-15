@@ -5,7 +5,8 @@ from Doctor.models import Doctor
 
 class TAssest(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
-    isTAssest = models.BooleanField(default=True)
+    # role number = 1 point to teacher assest
+    roleNum = models.IntegerField(default=1)
     doctor = models.ForeignKey(Doctor, on_delete=models.CASCADE)
 
 class Profile(models.Model):
