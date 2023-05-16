@@ -6,7 +6,7 @@ class Doctor(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     # role number = 0 point to doctor
     roleNum = models.IntegerField(default=0)
-    organization = models.ForeignKey(Organization, on_delete=models.CASCADE)
+    organization = models.ForeignKey(Organization, on_delete=models.CASCADE, default=0)
     
 
 class Material(models.Model):
@@ -28,6 +28,3 @@ class Profile(models.Model):
     doctor = models.OneToOneField(Doctor, on_delete=models.CASCADE)
     image = models.ImageField(upload_to='doctors/profiles_images/', default='doctors/profiles_images/USER.jpg')
     
-    
-
-
