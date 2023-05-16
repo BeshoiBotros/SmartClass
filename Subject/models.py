@@ -17,7 +17,6 @@ class Video(models.Model):
     chapter = models.ForeignKey(Chapter, on_delete=models.CASCADE, null=False)
     description = models.TextField(null=True, blank=True)
 
-# متنساش تعمل ال بول بول
 
 class TrueOrFalseQ(models.Model):
     quistion = models.CharField(max_length=255)
