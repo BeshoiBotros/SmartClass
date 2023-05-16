@@ -1,10 +1,12 @@
 from django.db import models
 from django.contrib.auth.models import User
+from Organization.models import Organization
 
 class Doctor(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     # role number = 0 point to doctor
     roleNum = models.IntegerField(default=0)
+    organization = models.ForeignKey(Organization, on_delete=models.CASCADE)
     
 
 class Material(models.Model):
