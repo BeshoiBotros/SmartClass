@@ -16,6 +16,7 @@ class Video(models.Model):
     video = models.FileField(upload_to='subjects/videos/', null=False)
     chapter = models.ForeignKey(Chapter, on_delete=models.CASCADE, null=False)
 
+
 class TrueOrFalseQ(models.Model):
     quistion = models.TextField(max_length=255)
     answer   = models.BooleanField(null=False)
