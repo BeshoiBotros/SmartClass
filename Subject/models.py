@@ -15,7 +15,7 @@ class Video(models.Model):
     title = models.CharField(max_length=255)
     video = models.FileField(upload_to='subjects/videos/', null=False)
     chapter = models.ForeignKey(Chapter, on_delete=models.CASCADE, null=False)
-
+    description = models.TextField(null=True, blank=True)
 
 class TrueOrFalseQ(models.Model):
     quistion = models.CharField(max_length=255)
