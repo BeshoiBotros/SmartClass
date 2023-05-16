@@ -20,6 +20,7 @@ class Video(models.Model):
 class TrueOrFalseQ(models.Model):
     quistion = models.CharField(max_length=255)
     answer   = models.BooleanField(null=False)
+    degree   = models.FloatField(null=False, default=0.0, max_length=5)
 
 class MultipleChoiceQ(models.Model):
 
