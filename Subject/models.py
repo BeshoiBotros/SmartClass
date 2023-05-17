@@ -32,7 +32,7 @@ class MultipleChoiceQ(models.Model):
         ('d', 'd')
     ]
 
-    quistion = models.CharField(max_length=255)
+    quistion = models.TextField(max_length=255)
     choiceA  = models.CharField(max_length=255)
     choiceB  = models.CharField(max_length=255)
     choiceC  = models.CharField(max_length=255)
