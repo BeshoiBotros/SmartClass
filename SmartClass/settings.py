@@ -31,7 +31,8 @@ INSTALLED_APPS = [
     'Organization.apps.OrganizationConfig',
     'Student.apps.StudentConfig',
     'Subject.apps.SubjectConfig',
-    'T_assest.apps.TAssestConfig'
+    'T_assest.apps.TAssestConfig',
+    'rest_framework'
 
 ]
 

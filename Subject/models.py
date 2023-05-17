@@ -33,7 +33,7 @@ class TrueOrFalseQ(models.Model):
     subject  = models.ForeignKey(Subject, on_delete=models.CASCADE)
     tAssest  = models.ForeignKey(TAssest, on_delete=models.PROTECT)
     
-class MultipleChoiceQ(models.Model):
+class   (models.Model):
 
     answer_choices = [
         ('a', 'a'),
