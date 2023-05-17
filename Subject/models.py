@@ -1,5 +1,7 @@
 from django.db import models
 from Doctor.models import Doctor
+from T_assest.models import TAssest
+from Student.models import Student
 
 class Subject(models.Model):
     name = models.CharField(max_length=255)
@@ -28,7 +30,9 @@ class TrueOrFalseQ(models.Model):
     answer   = models.BooleanField(null=False)
     degree   = models.FloatField(null=False, default=0.0, max_length=5)
     level    = models.CharField(choices=level_choices, max_length=255, default='easy')
-
+    subject  = models.ForeignKey(Subject, on_delete=models.CASCADE)
+    tAssest  = models.ForeignKey(TAssest, on_delete=models.PROTECT)
+    
 class MultipleChoiceQ(models.Model):
 
     answer_choices = [
@@ -41,7 +45,7 @@ class MultipleChoiceQ(models.Model):
     level_choices = [
         ('easy','easy'),
         ('medium', 'medium'),
-        ('hard','hard')
+        ('hard','hard') 
     ]
     
     quistion = models.TextField(max_length=255)
@@ -52,6 +56,34 @@ class MultipleChoiceQ(models.Model):
     answer   = models.CharField(choices=answer_choices, default='a', max_length=255)
     degree   = models.FloatField(null=False, default=0.0, max_length=5)
     level    = models.CharField(choices=level_choices, max_length=255, default='easy')
+    subject  = models.ForeignKey(Subject, on_delete=models.CASCADE)
+    tAssest  = models.ForeignKey(TAssest, on_delete=models.PROTECT)
+
 
 class AsSayQ(models.Model):
     pass
+
+
+class QuestionsBank(models.Model):
+    subject         = models.ForeignKey(Subject, on_delete=models.CASCADE)
+    multipleChoiceQ = models.ManyToManyField('MultipleChoiceQ')
+    trueOrFalseQ    = models.ManyToManyField('TrueOrFalseQ', blank=True)
+
+class Quiz(models.Model):
+    subject         = models.ForeignKey(Subject, on_delete=models.CASCADE)
+    multipleChoiceQ = models.ManyToManyField('MultipleChoiceQ')
+    trueOrFalseQ    = models.ManyToManyField('TrueOrFalseQ', blank=True)
+    startDate       = models.DateTimeField(auto_now_add=True)
+    endDate         = models.DateTimeField(null=False)
+
+class Assignment(models.Model):
+    subject         = models.ForeignKey(Subject, on_delete=models.CASCADE)
+    multipleChoiceQ = models.ManyToManyField('MultipleChoiceQ')
+    trueOrFalseQ    = models.ManyToManyField('TrueOrFalseQ', blank=True)
+    startDate       = models.DateTimeField(auto_now_add=True)
+    endDate         = models.DateTimeField(null=False)
+
+class QuizsDegree(models.Model):
+    student = models.ForeignKey(Student, on_delete=models.CASCADE)
+    degree  = models.FloatField(max_length=5, default=0.0)
+    quiz    = models.ForeignKey(Quiz, on_delete=models.PROTECT)

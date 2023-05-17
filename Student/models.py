@@ -14,5 +14,4 @@ class Profile(models.Model):
 
 class PaidCourses(models.Model):
     student = models.ForeignKey(Student, on_delete=models.CASCADE)
-    doctor  = models.ForeignKey(Doctor, on_delete=models.CASCADE)
     subject = models.ForeignKey(Subject, on_delete=models.CASCADE)
