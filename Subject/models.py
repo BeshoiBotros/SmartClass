@@ -19,9 +19,15 @@ class Video(models.Model):
 
 
 class TrueOrFalseQ(models.Model):
+    level_choices = [
+        ('easy','easy'),
+        ('medium', 'medium'),
+        ('hard','hard')
+    ]
     quistion = models.CharField(max_length=255)
     answer   = models.BooleanField(null=False)
     degree   = models.FloatField(null=False, default=0.0, max_length=5)
+    level    = models.CharField(choices=level_choices, max_length=255, default='easy')
 
 class MultipleChoiceQ(models.Model):
 
@@ -32,13 +38,20 @@ class MultipleChoiceQ(models.Model):
         ('d', 'd')
     ]
 
+    level_choices = [
+        ('easy','easy'),
+        ('medium', 'medium'),
+        ('hard','hard')
+    ]
+    
     quistion = models.TextField(max_length=255)
     choiceA  = models.CharField(max_length=255)
     choiceB  = models.CharField(max_length=255)
     choiceC  = models.CharField(max_length=255)
     choiceD  = models.CharField(max_length=255)
-    answer   = models.CharField(choices=answer_choices, default='a')
+    answer   = models.CharField(choices=answer_choices, default='a', max_length=255)
     degree   = models.FloatField(null=False, default=0.0, max_length=5)
+    level    = models.CharField(choices=level_choices, max_length=255, default='easy')
 
 class AsSayQ(models.Model):
     pass
