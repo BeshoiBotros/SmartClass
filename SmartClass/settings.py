@@ -29,12 +29,19 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'Doctor.apps.DoctorConfig',
     'Organization.apps.OrganizationConfig',
-    'Student.apps.StudentConfig',
     'Subject.apps.SubjectConfig',
     'T_assest.apps.TAssestConfig',
-    'rest_framework'
+    'rest_framework',
+    'rest_framework_simplejwt',
+    'Student.apps.StudentConfig'
 
 ]
+
+REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': (
+        'rest_framework_simplejwt.authentication.JWTAuthentication',
+    )
+}
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',

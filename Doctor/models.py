@@ -6,7 +6,7 @@ class Doctor(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     # role number = 0 point to doctor
     roleNum = models.IntegerField(default=0)
-    organization = models.ForeignKey(Organization, on_delete=models.CASCADE, default=0)
+    organization = models.ForeignKey(Organization, on_delete=models.CASCADE, blank=False, null=False)
     
 
 class Material(models.Model):

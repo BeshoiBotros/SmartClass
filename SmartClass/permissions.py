@@ -5,7 +5,7 @@ class OrganizationPermiaaion(BasePermission):
 
     def has_permission(self, request, view):
         try:
-            org = Organization.objects.get(user = request.user)
+            org = Organization.objects.get(user = request.user.id)
             return True
         except Organization.DoesNotExist:
             return False

@@ -30,10 +30,10 @@ class TrueOrFalseQ(models.Model):
     answer   = models.BooleanField(null=False)
     degree   = models.FloatField(null=False, default=0.0, max_length=5)
     level    = models.CharField(choices=level_choices, max_length=255, default='easy')
-    subject  = models.ForeignKey(Subject, on_delete=models.CASCADE)
-    tAssest  = models.ForeignKey(TAssest, on_delete=models.PROTECT)
+    subject  = models.ForeignKey(Subject, on_delete=models.CASCADE, blank=True, null=True)
+    tAssest  = models.ForeignKey(TAssest, on_delete=models.PROTECT, blank=True, null=True)
     
-class   (models.Model):
+class  MultipleChoiceQ(models.Model):
 
     answer_choices = [
         ('a', 'a'),
@@ -56,8 +56,8 @@ class   (models.Model):
     answer   = models.CharField(choices=answer_choices, default='a', max_length=255)
     degree   = models.FloatField(null=False, default=0.0, max_length=5)
     level    = models.CharField(choices=level_choices, max_length=255, default='easy')
-    subject  = models.ForeignKey(Subject, on_delete=models.CASCADE)
-    tAssest  = models.ForeignKey(TAssest, on_delete=models.PROTECT)
+    subject  = models.ForeignKey(Subject, on_delete=models.CASCADE, null=False, default=False)
+    tAssest  = models.ForeignKey(TAssest, on_delete=models.PROTECT, blank=True, null=True)
 
 
 class AsSayQ(models.Model):
@@ -84,6 +84,10 @@ class Assignment(models.Model):
     endDate         = models.DateTimeField(null=False)
 
 class QuizsDegree(models.Model):
-    student = models.ForeignKey(Student, on_delete=models.CASCADE)
+    # student = models.ForeignKey(Student, on_delete=models.CASCADE)
     degree  = models.FloatField(max_length=5, default=0.0)
     quiz    = models.ForeignKey(Quiz, on_delete=models.PROTECT)
+
+class PaidCourses(models.Model):
+    student = models.ForeignKey(Student, on_delete=models.CASCADE)
+    subject = models.ForeignKey(Subject, on_delete=models.CASCADE)
