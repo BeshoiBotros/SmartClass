@@ -5,3 +5,4 @@ urlpatterns = [
     path('show-doctors/', viewDoctors, name='view-doctors'),
     path('delete-doctor/<int:id>/', deleteDoctor, name='delete-doctor')
 ]
+ 
