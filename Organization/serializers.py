@@ -15,3 +15,8 @@ class UserSerializer(serializers.Serializer):
     def create(self, validated_data):
         user = User.objects.create_user(username=validated_data['username'], password=validated_data['password'])
         return user
+
+class DoctorSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Doctor
+        fields = '__all__'

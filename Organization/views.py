@@ -1,7 +1,7 @@
 from django.shortcuts import render
 from SmartClass.permissions import OrganizationPermission
-from .serializers import UserSerializer
-from Doctor.models import Doctor
+from .serializers import UserSerializer, DoctorSerializer
+from Doctor.models import Doctor, Profile
 from .models import Organization
 from django.contrib.auth.models import User
 from rest_framework.decorators import api_view, permission_classes
@@ -30,6 +30,7 @@ def createDoctorView(request):
     
         try:
             doctor = Doctor.objects.create(user = User.objects.get(username = user.username), organization=org)
+            doctorProfile = Profile.objects.create(doctor = doctor)
         except:
             msg = "something goes wrong!"
     else:
@@ -38,3 +39,16 @@ def createDoctorView(request):
 
     msg = "Doctor created successfuly"
     return Response({'msg' : msg}, status=status.HTTP_201_CREATED)
+
+@api_view(['GET'])
+@permission_classes([OrganizationPermission])
+def viewDoctors(request):
+    try:
+        org = Organization.objects.get(user = request.user)
+    except:
+        msg = "Authentication credentials were not provided."
+        return Response({'msg' : msg}, status=status.HTTP_203_NON_AUTHORITATIVE_INFORMATION)
+    doctorsOfOrg = Doctor.objects.all().filter(organization=org)
+    serializer = DoctorSerializer(doctorsOfOrg, many=True)
+    return Response(serializer.data, status=status.HTTP_202_ACCEPTED)
+    
