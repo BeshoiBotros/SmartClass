@@ -14,19 +14,27 @@ def createDoctorView(request):
     msg = ""
     serializer = UserSerializer(data=request.data)
     serializer.is_valid(raise_exception=True)
-    try:
-        user = serializer.create(request.data)
-    except:
-        msg = "User already exist try again"
-        return Response({'msg' : msg}, status=status.HTTP_400_BAD_REQUEST)
+    
     try:
         org = Organization.objects.get(user = request.user)
     except:
         msg = "Authentication credentials were not provided."
         return Response({'msg' : msg}, status=status.HTTP_203_NON_AUTHORITATIVE_INFORMATION)
-    try:
-        doctor = Doctor.objects.create(user = User.objects.get(username = user.username), organization=org)
-    except:
-        msg = "something goes wrong!"
+    docsOfOrg = Doctor.objects.all().filter(organization = org).count()
+    if org.numOfDoctors > docsOfOrg:
+        try:
+            user = serializer.create(request.data)
+        except:
+            msg = "User already exist try again"
+            return Response({'msg' : msg}, status=status.HTTP_400_BAD_REQUEST)
+    
+        try:
+            doctor = Doctor.objects.create(user = User.objects.get(username = user.username), organization=org)
+        except:
+            msg = "something goes wrong!"
+    else:
+        msg = "the number of doctor has reached the maximum number"
+        return Response({'msg' : msg}, status=status.HTTP_501_NOT_IMPLEMENTED)
+
     msg = "Doctor created successfuly"
     return Response({'msg' : msg}, status=status.HTTP_201_CREATED)
