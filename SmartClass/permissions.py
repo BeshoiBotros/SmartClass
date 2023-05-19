@@ -1,7 +1,7 @@
 from rest_framework.permissions import BasePermission
 from Organization.models import Organization
 
-class OrganizationPermiaaion(BasePermission):
+class OrganizationPermission(BasePermission):
 
     def has_permission(self, request, view):
         try:
