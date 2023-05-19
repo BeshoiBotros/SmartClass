@@ -52,3 +52,23 @@ def viewDoctors(request):
     serializer = DoctorSerializer(doctorsOfOrg, many=True)
     return Response(serializer.data, status=status.HTTP_202_ACCEPTED)
     
+@api_view(['DELETE'])
+@permission_classes([OrganizationPermission])
+def deleteDoctor(request, id):
+    try:
+        org = Organization.objects.get(user = request.user)
+    except:
+        msg = "Authentication credentials were not provided."
+        return Response({'msg' : msg}, status=status.HTTP_203_NON_AUTHORITATIVE_INFORMATION)
+    try:
+        doctor = Doctor.objects.get(id = id)
+    except Doctor.DoesNotExist:
+        msg = "Doctor Doesn't Exist"
+        return Response({'msg' : msg}, status=status.HTTP_404_NOT_FOUND)
+    if doctor.organization != org:
+        msg = "You don't have access to delete this doctor"
+        return Response({'msg' : msg}, status=status.HTTP_203_NON_AUTHORITATIVE_INFORMATION)
+    else:
+        doctor.delete()
+    msg = "Doctor deleted successfuly"
+    return Response({'msg' : msg}, status=status.HTTP_202_ACCEPTED)
