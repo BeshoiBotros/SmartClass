@@ -19,3 +19,6 @@ class OrganizationPermission(BasePermission):
         except Organization.DoesNotExist:
             return False
         
+
+class DoctorPermission(BasePermission):
+    pass

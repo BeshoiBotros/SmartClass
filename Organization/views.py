@@ -70,5 +70,6 @@ def deleteDoctor(request, id):
         return Response({'msg' : msg}, status=status.HTTP_203_NON_AUTHORITATIVE_INFORMATION)
     else:
         doctor.delete()
+        doctor.user.delete()
     msg = "Doctor deleted successfuly"
     return Response({'msg' : msg}, status=status.HTTP_202_ACCEPTED)
