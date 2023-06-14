@@ -11,6 +11,7 @@ class OrganizationPermission(BasePermission):
             return False
     
     def has_object_permission(self, request, view, obj):
+        
         try:
             org = Organization.objects.get(user=request.user)
             if obj.user == org.user:

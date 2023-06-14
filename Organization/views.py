@@ -1,75 +1,55 @@
-from django.shortcuts import render
+from rest_framework import generics
 from SmartClass.permissions import OrganizationPermission
-from .serializers import UserSerializer, DoctorSerializer
-from Doctor.models import Doctor, Profile
-from .models import Organization
-from django.contrib.auth.models import User
-from rest_framework.decorators import api_view, permission_classes
-from rest_framework.response import Response
+from .serializers import CreateDoctorSerializer, DoctorSerializer, DeleteDoctorSerializer
 from rest_framework import status
+from rest_framework.response import Response
+from .models import Organization
+from .models import Doctor
+from rest_framework import serializers
+from rest_framework.decorators import permission_classes, api_view
+from django.contrib.auth.models import User
 
-@api_view(['POST'])
-@permission_classes([OrganizationPermission])
-def createDoctorView(request):
-    msg = ""
-    serializer = UserSerializer(data=request.data)
-    serializer.is_valid(raise_exception=True)
-    
-    try:
-        org = Organization.objects.get(user = request.user)
-    except:
-        msg = "Authentication credentials were not provided."
-        return Response({'msg' : msg}, status=status.HTTP_203_NON_AUTHORITATIVE_INFORMATION)
-    docsOfOrg = Doctor.objects.all().filter(organization = org).count()
-    if org.numOfDoctors > docsOfOrg:
+class CreateDoctorView(generics.CreateAPIView):
+    permission_classes = [OrganizationPermission]
+    serializer_class = CreateDoctorSerializer
+    queryset = Doctor.objects.all()
+    def get_serializer_context(self):
+        context = super().get_serializer_context()
+        context.update({'request' : self.request})
+        return context
+
+    def perform_create(self, serializer):
         try:
-            user = serializer.create(request.data)
+            org = Organization.objects.get(user = self.request.user)
         except:
-            msg = "User already exist try again"
-            return Response({'msg' : msg}, status=status.HTTP_400_BAD_REQUEST)
-    
-        try:
-            doctor = Doctor.objects.create(user = User.objects.get(username = user.username), organization=org)
-            doctorProfile = Profile.objects.create(doctor = doctor)
-        except:
-            msg = "something goes wrong!"
-    else:
-        msg = "the number of doctor has reached the maximum number"
-        return Response({'msg' : msg}, status=status.HTTP_501_NOT_IMPLEMENTED)
+            return Response("the user is not an Organization.", status=status.HTTP_400_BAD_REQUEST)
+        doctors = Doctor.objects.filter(organization = org).count()
+        print(doctors < org.numOfDoctors)
+        if doctors >= org.numOfDoctors:
+            raise serializers.ValidationError({"msg":"The doctors in your organization have reached the maximum number. Please upgrade to add more :)"})
+        serializer.save()
 
-    msg = "Doctor created successfuly"
-    return Response({'msg' : msg}, status=status.HTTP_201_CREATED)
-
-@api_view(['GET'])
-@permission_classes([OrganizationPermission])
-def viewDoctors(request):
-    try:
-        org = Organization.objects.get(user = request.user)
-    except:
-        msg = "Authentication credentials were not provided."
-        return Response({'msg' : msg}, status=status.HTTP_203_NON_AUTHORITATIVE_INFORMATION)
-    doctorsOfOrg = Doctor.objects.all().filter(organization=org)
-    serializer = DoctorSerializer(doctorsOfOrg, many=True)
-    return Response(serializer.data, status=status.HTTP_202_ACCEPTED)
+class ViewDoctorsView(generics.ListAPIView):
+    permission_classes = [OrganizationPermission]
+    serializer_class   = DoctorSerializer
+    def get_queryset(self):
+        return Doctor.objects.filter(organization = Organization.objects.get(user = self.request.user))
     
+class DeleteDoctor(generics.DestroyAPIView):
+    serializer_class = DeleteDoctorSerializer
+    permission_classes = [OrganizationPermission]
+    queryset = Doctor.objects.all()
+    def get_queryset(self):
+        organization = self.request.user.organization
+        return super().get_queryset().filter(organization=organization)
+
 @api_view(['DELETE'])
 @permission_classes([OrganizationPermission])
-def deleteDoctor(request, id):
-    try:
-        org = Organization.objects.get(user = request.user)
-    except:
-        msg = "Authentication credentials were not provided."
-        return Response({'msg' : msg}, status=status.HTTP_203_NON_AUTHORITATIVE_INFORMATION)
-    try:
-        doctor = Doctor.objects.get(id = id)
-    except Doctor.DoesNotExist:
-        msg = "Doctor Doesn't Exist"
-        return Response({'msg' : msg}, status=status.HTTP_404_NOT_FOUND)
-    if doctor.organization != org:
-        msg = "You don't have access to delete this doctor"
-        return Response({'msg' : msg}, status=status.HTTP_203_NON_AUTHORITATIVE_INFORMATION)
-    else:
-        doctor.delete()
-        doctor.user.delete()
-    msg = "Doctor deleted successfuly"
-    return Response({'msg' : msg}, status=status.HTTP_202_ACCEPTED)
+def deleteDoctor(request, pk):
+    organization = Organization.objects.get(user = request.user)
+    doctor = Doctor.objects.get(id = pk)
+    if doctor.organization != organization:
+        return Response({'detail' : 'Not Found'}, status=status.HTTP_404_NOT_FOUND)
+    User.objects.get(pk  = doctor.user.pk).delete()
+    doctor.delete()
+    return Response({'msg' : "doctor deleted successfuly"})
