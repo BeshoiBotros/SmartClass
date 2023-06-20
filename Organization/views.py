@@ -1,6 +1,6 @@
 from rest_framework import generics
 from SmartClass.permissions import OrganizationPermission
-from .serializers import CreateDoctorSerializer, DoctorSerializer, DeleteDoctorSerializer
+from .serializers import CreateDoctorSerializer, DoctorSerializer
 from rest_framework import status
 from rest_framework.response import Response
 from .models import Organization
@@ -35,13 +35,6 @@ class ViewDoctorsView(generics.ListAPIView):
     def get_queryset(self):
         return Doctor.objects.filter(organization = Organization.objects.get(user = self.request.user))
     
-class DeleteDoctor(generics.DestroyAPIView):
-    serializer_class = DeleteDoctorSerializer
-    permission_classes = [OrganizationPermission]
-    queryset = Doctor.objects.all()
-    def get_queryset(self):
-        organization = self.request.user.organization
-        return super().get_queryset().filter(organization=organization)
 
 @api_view(['DELETE'])
 @permission_classes([OrganizationPermission])
